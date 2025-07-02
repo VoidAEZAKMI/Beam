@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "core.api.apps.ApiConfig",        
     "core.product.apps.ProductConfig",
+    "channels",
 ]
 
 
@@ -40,6 +41,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF     = "core.app.urls"
 WSGI_APPLICATION = "core.app.wsgi.application"
+ASGI_APPLICATION = "core.app.asgi.application"
 
 TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -71,3 +73,13 @@ STATIC_URL  = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env("REDIS_URL", default="redis://localhost:6379/0")],
+        },
+    }
+}
