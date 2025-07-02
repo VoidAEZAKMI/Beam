@@ -6,7 +6,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 import core.routing   
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.app.settings.prod")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.app.settings")
 
 django_app = get_asgi_application()
 
