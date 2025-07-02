@@ -15,25 +15,17 @@ class WSNotifyMixin:
 
 
 class JSONMixin(WSNotifyMixin):
-
     def form_valid(self, form):
         create = self.object is None
-        response = super().form_valid(form)
+        response = super().form_valid(form)   # <-- возвращаем HTML-редирект
         action = "создан" if create else "обновлён"
         self._ws_send(f"Товар «{self.object}» {action}.")
-        return JsonResponse({
-            "success":       True,
-            "product_id":    self.object.pk,
-            "product_name":  self.object.name,
-            "product_price": str(self.object.price),
-        })
+        return response
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
-        pk  = obj.pk
-        super().delete(request, *args, **kwargs)
         self._ws_send(f"Товар «{obj}» удалён.")
-        return JsonResponse({"success": True, "product_id": pk})
+        return super().delete(request, *args, **kwargs)
 
 
 class ProductListView(ListView):

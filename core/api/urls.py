@@ -16,7 +16,6 @@ router.register(r'orderitem', OrderItemViewSet)
 
 
 
-
 urlpatterns = [
     path('', include(router.urls)),
 ]

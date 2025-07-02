@@ -15,7 +15,7 @@ RUN pip install --upgrade pip && \
     pip install "poetry==$POETRY_VERSION" && \
     poetry config virtualenvs.create false && \
     poetry lock --no-interaction --no-ansi && \
-    poetry install --no-root --without dev --no-interaction --no-ansi
+    poetry install --no-root --no-interaction --no-ansi
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

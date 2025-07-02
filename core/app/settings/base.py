@@ -11,7 +11,8 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="mysecretkey")
 DEBUG = False         
-ALLOWED_HOSTS: list[str] = []
+# ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 INSTALLED_APPS = [
