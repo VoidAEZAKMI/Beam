@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Удалить поставщика{% endblock %}
+
+{% block content %}
+<h1>Удалить поставщика «{{ object }}»?</h1>
+<p>С ним будут разорваны связи со всеми товарами.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Да, удалить</button>
+    <a href="{% url 'product:supplier_index' %}">Отмена</a>
+</form>
+{% endblock %}

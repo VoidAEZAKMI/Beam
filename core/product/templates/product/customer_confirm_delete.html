@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Удалить клиента{% endblock %}
+{% block content %}
+<h1>Удалить клиента «{{ object }}»?</h1>
+<p>Будут удалены и все его заказы.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Да, удалить</button>
+    <a href="{% url 'product:customer_index' %}">Отмена</a>
+</form>
+{% endblock %}

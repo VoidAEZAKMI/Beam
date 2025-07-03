@@ -1,14 +1,11 @@
 {% extends "base.html" %}
-{% block title %}
-    {% if object %}Редактировать{% else %}Создать{% endif %} товар
-{% endblock %}
-
+{% block title %}{% if object %}Редактировать{% else %}Создать{% endif %} товар{% endblock %}
 {% block content %}
 <h1>{% if object %}Редактировать{% else %}Создать{% endif %} товар</h1>
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.as_p }}  {# поля: name, price, supplier, categories #}
     <button type="submit">Сохранить</button>
     <a href="{% url 'product:product_index' %}">Отмена</a>
 </form>
