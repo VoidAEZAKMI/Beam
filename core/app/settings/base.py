@@ -11,8 +11,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="mysecretkey")
 DEBUG = False         
-# ALLOWED_HOSTS: list[str] = []
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS: list[str] = []
 
 
 INSTALLED_APPS = [
@@ -41,7 +40,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF     = "core.app.urls"
-WSGI_APPLICATION = "core.app.wsgi.application"
+# WSGI_APPLICATION = "core.app.wsgi.application" 
 ASGI_APPLICATION = "core.app.asgi.application"
 
 TEMPLATES = [{
@@ -80,7 +79,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [env("REDIS_URL", default="redis://127.0.0.1:6379/0")],
+            "hosts": [env("REDIS_URL", default="redis://redis:6379/0")],
         },
     }
 }
+

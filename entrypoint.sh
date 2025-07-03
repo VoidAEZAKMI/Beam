@@ -29,3 +29,4 @@ wait_for_port "$POSTGRES_HOST" "$POSTGRES_PORT"
 
 # Запуск Django-приложения (слушаем 8000)
 python manage.py runserver 0.0.0.0:8000
+# daphne -p 8000 core.app.asgi:application
