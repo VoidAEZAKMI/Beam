@@ -1,75 +1,48 @@
-const sock = new WebSocket(
-    (location.protocol === "https:" ? "wss://" : "ws://") +
-    location.host + "/ws/notifications/"
-);
-sock.onmessage = ({data}) => {
-    const {message} = JSON.parse(data);
-    const box = document.getElementById("ws-alert");
-    box.textContent = message;
-    box.style.display = "block";
-    box.style.opacity = 1;
-    setTimeout(() => box.style.opacity = 0, 4000);
-};
+(function () {
+    const scheme     = location.protocol === "https:" ? "wss" : "ws";
+    const endpoint   = `${scheme}://${location.host}/ws/notifications/`;
+    const log        = document.getElementById("ws-log");
+    const MAX_MSG    = 100;                     // сколько сообщений держим в истории
+    const LS_KEY     = "ws_history";            // ключ в localStorage
 
+    /* --- 0. Восстановление истории из localStorage --- */
+    try {
+        const saved = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+        saved.forEach(text => addMsg(text));    // старые в конец (порядок сохранён)
+    } catch { /* игнорируем битые данные */ }
 
-const $   = q => document.querySelector(q);
-const $$  = q => document.querySelectorAll(q);
-const csrftoken = "{{ csrf_token }}";
+    /* --- 1. Подключаемся к WebSocket --- */
+    const socket = new WebSocket(endpoint);
 
-function addRow(id, name, price) {
-    const li = document.createElement("li");
-    li.id = `product-${id}`;
-    li.className = "list-group-item d-flex justify-content-between align-items-center";
-    li.innerHTML = `${name} — $${price}
-        <div>
-          <button class="btn btn-warning btn-sm" onclick="openUpdate(${id}, '${name}', '${price}')">✏️</button>
-          <button class="btn btn-danger  btn-sm" onclick="openDelete(${id})">🗑️</button>
-        </div>`;
-    $("#productList").appendChild(li);
-}
+    socket.addEventListener("open",   ()   => console.log("WS: connected"));
+    socket.addEventListener("error",  err => console.error("WS error:", err));
 
+    /* --- 2. Обработка входящих сообщений --- */
+    socket.addEventListener("message", ({data}) => {
+        try {
+            const {message} = JSON.parse(data);
+            addMsg(message, true);              // true = сохранить в localStorage
+        } catch(e) {
+            console.warn("WS parse fail:", e);
+        }
+    });
 
-$("#createForm").addEventListener("submit", e => {
-    e.preventDefault();
-    fetch(e.target.action, {method:"POST", body:new FormData(e.target)})
-        .then(r=>r.json()).then(d=>{
-            if (d.success) addRow(d.product_id, d.product_name, d.product_price);
-            e.target.reset();
-        });
-});
+    /* --- вспомогательные функции --- */
+    function addMsg(text, save = false) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        log.prepend(li);                        // новое сообщение наверх
 
+        // ограничиваем размер списка в DOM
+        while (log.children.length > MAX_MSG) log.lastChild.remove();
 
-const uModal = new bootstrap.Modal("#updateModal");
-$("#updateForm").addEventListener("submit", e=>{
-    e.preventDefault();
-    fetch(e.target.action, {method:"POST", body:new FormData(e.target)})
-        .then(r=>r.json()).then(d=>{
-            if (d.success) {
-                const row = $(`#product-${d.product_id}`);
-                row.firstChild.textContent = `${d.product_name} — $${d.product_price} `;
-                uModal.hide();
-            }
-        });
-});
-function openUpdate(id, name, price) {
-    $("#uName").value  = name;
-    $("#uPrice").value = price;
-    $("#updateForm").action = `/` + id + `/update/`;  
-    uModal.show();
-}
-
-const dModal = new bootstrap.Modal("#deleteModal");
-$("#deleteForm").addEventListener("submit", e=>{
-    e.preventDefault();
-    fetch(e.target.action, {method:"POST", headers:{"X-Requested-With":"XMLHttpRequest"}})
-        .then(r=>r.json()).then(d=>{
-            if (d.success) {
-                $(`#product-${d.product_id}`).remove();
-                dModal.hide();
-            }
-        });
-});
-function openDelete(id){
-    $("#deleteForm").action = `/` + id + `/delete/`;
-    dModal.show();
-}
+        // и в localStorage
+        if (save) {
+            const history = [...log.querySelectorAll("li")]
+                              .slice(0, MAX_MSG)       // берём ровно MAX_MSG
+                              .reverse()               // обратно в хронологию
+                              .map(li => li.textContent);
+            localStorage.setItem(LS_KEY, JSON.stringify(history));
+        }
+    }
+})();
