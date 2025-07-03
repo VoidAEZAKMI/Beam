@@ -2,11 +2,20 @@
 {% block title %}Список категорий{% endblock %}
 
 {% block content %}
+<nav style="margin-bottom:1rem">
+    <a href="{% url 'product:supplier_index' %}">Поставщики</a> |
+    <a href="{% url 'product:category_index' %}">Категории</a> |
+    <a href="{% url 'product:product_index' %}">Товары</a> |
+    <a href="{% url 'product:customer_index' %}">Клиенты</a> |
+    <a href="{% url 'product:order_index' %}">Заказы</a> |
+    <a href="{% url 'product:orderitem_index' %}">Позиции заказов</a>
+</nav>
+
 <h1>Категории</h1>
 
 <table>
     <thead>
-        <tr><th>ID</th><th>Название</th><th>Товаров в категории</th><th>Действия</th></tr>
+        <tr><th>ID</th><th>Название</th><th>Товаров</th><th>Действия</th></tr>
     </thead>
     <tbody>
     {% for category in categories %}

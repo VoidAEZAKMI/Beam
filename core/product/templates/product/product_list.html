@@ -2,6 +2,15 @@
 {% block title %}Список товаров{% endblock %}
 
 {% block content %}
+<nav style="margin-bottom:1rem">
+    <a href="{% url 'product:supplier_index' %}">Поставщики</a> |
+    <a href="{% url 'product:category_index' %}">Категории</a> |
+    <a href="{% url 'product:product_index' %}">Товары</a> |
+    <a href="{% url 'product:customer_index' %}">Клиенты</a> |
+    <a href="{% url 'product:order_index' %}">Заказы</a> |
+    <a href="{% url 'product:orderitem_index' %}">Позиции заказов</a>
+</nav>
+
 <h1>Товары</h1>
 
 <table>
@@ -19,11 +28,9 @@
             <td>{{ product.price }}</td>
             <td>{{ product.supplier|default:"—" }}</td>
             <td>
-                {% if product.categories.all %}
+                {% if product.categories.exists %}
                     {{ product.categories.all|join:", " }}
-                {% else %}
-                    —
-                {% endif %}
+                {% else %}—{% endif %}
             </td>
             <td>
                 <a href="{% url 'product:product_update' product.pk %}">Изменить</a> |
